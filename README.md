@@ -25,3 +25,27 @@ A simple CRUD (Create, Read, Update, Delete) application built with **Laravel 11
    ```bash
    git clone https://github.com/yourusername/laravel-book-management-system.git
    cd laravel-book-management-system
+
+## Install dependencies:
+
+composer install
+npm install
+npm run dev
+
+## Update .env:
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_mysql_username
+DB_PASSWORD=your_mysql_password
+
+## Generate application key:
+php artisan key:generate
+
+## Run the database migrations:
+php artisan migrate
+
+## Serve the application locally:
+php artisan serve
