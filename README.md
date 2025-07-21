@@ -1,6 +1,6 @@
 # Laravel Book Management System
 
-A simple CRUD (Create, Read, Update, Delete) application built with **Laravel 11** and **MySQL** for managing a collection of books and their associated images.
+A simple CRUD (Create, Read, Update, Delete) application built with **Laravel 12** and **MySQL** for managing a collection of books and their associated images.
 
 ## Features
 
