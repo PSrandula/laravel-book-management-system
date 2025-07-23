@@ -1,36 +1,148 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 style="text-align:center; color:#333;">Edit Book</h1>
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
 
-    <div style="max-width: 600px; margin: 0 auto;">
-        @if ($errors->any())
-            <div style="color: red; margin-bottom: 20px;">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+      <div class="card shadow-sm">
+        <div class="card-header text-center">
+          <h2>Edit Book</h2>
+        </div>
 
-        <form action="{{ route('books.update', $book->id) }}" method="POST" enctype="multipart/form-data" style="background:#f9f9f9; padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <div class="card-body">
+          <form method="POST" action="{{ route('books.update', $book) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            <label>Title:</label><br>
-            <input type="text" name="title" value="{{ old('title', $book->title) }}" required style="width:100%; padding:10px; margin-bottom:15px;"><br>
+            <div class="mb-3">
+              <input
+                type="text"
+                name="title"
+                class="form-control"
+                placeholder="Book Title"
+                value="{{ old('title', $book->title) }}"
+                required
+              >
+            </div>
 
-            <label>Author:</label><br>
-            <input type="text" name="author" value="{{ old('author', $book->author) }}" required style="width:100%; padding:10px; margin-bottom:15px;"><br>
+            <div class="mb-3">
+              <input
+                type="text"
+                name="author"
+                class="form-control"
+                placeholder="Author"
+                value="{{ old('author', $book->author) }}"
+                required
+              >
+            </div>
 
-            <label>Publication Year:</label><br>
-            <input type="number" name="publication_year" value="{{ old('publication_year', $book->publication_year) }}" required style="width:100%; padding:10px; margin-bottom:15px;"><br>
+            <div class="mb-3">
+              <input
+                type="number"
+                name="publication_year"
+                class="form-control"
+                placeholder="Publication Year"
+                min="1500"
+                max="{{ date('Y') }}"
+                value="{{ old('publication_year', $book->publication_year) }}"
+                required
+              >
+            </div>
 
-            <label>Book Images (optional):</label><br>
-            <input type="file" name="images[]" multiple style="margin-bottom:20px;"><br>
+            <div class="mb-3">
+              <select
+                name="category_id"
+                id="category"
+                class="form-select"
+                required
+              >
+                <option value="">Select Main Category</option>
+                @foreach($categories as $category)
+                  <option value="{{ $category->id }}" {{ (old('category_id', $book->category_id) == $category->id) ? 'selected' : '' }}>
+                    {{ $category->name }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
 
-            <button type="submit" style="padding: 10px 25px; background-color: #2196F3; color:white; border:none; border-radius:5px;">Update</button>
-        </form>
+            <div class="mb-3">
+              <select
+                name="subcategory_id"
+                id="subcategory"
+                class="form-select"
+                required
+              >
+                <option value="">Select Subcategory</option>
+                @foreach($subcategories as $subcategory)
+                  <option
+                    data-category="{{ $subcategory->category_id }}"
+                    value="{{ $subcategory->id }}"
+                    {{ (old('subcategory_id', $book->subcategory_id) == $subcategory->id) ? 'selected' : '' }}
+                  >
+                    {{ $subcategory->name }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+
+            <label class="form-label">Existing Images:</label>
+            <div class="mb-3 d-flex flex-wrap gap-3">
+              @foreach($book->images as $image)
+                <img
+                  src="{{ asset('storage/book_images/' . $image->filename) }}"
+                  alt="Book Image"
+                  class="img-thumbnail"
+                  style="height: 100px; width: auto;"
+                >
+              @endforeach
+            </div>
+
+            <div class="mb-4">
+              <label for="images" class="form-label">Add More Images (optional):</label>
+              <input
+                type="file"
+                name="images[]"
+                id="images"
+                class="form-control"
+                multiple
+              >
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">Update Book</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="{{ route('books.index') }}" class="btn btn-secondary">Back to Books</a>
+      </div>
+
     </div>
+  </div>
+</div>
+
+<script>
+  const categorySelect = document.getElementById('category');
+  const subcategorySelect = document.getElementById('subcategory');
+
+  function filterSubcategories() {
+    const selectedCategory = categorySelect.value;
+
+    Array.from(subcategorySelect.options).forEach(option => {
+      if (!option.value) return; // skip placeholder
+      option.style.display = option.dataset.category === selectedCategory ? 'block' : 'none';
+    });
+
+    if (!subcategorySelect.value) {
+      subcategorySelect.value = '';
+    }
+  }
+
+  categorySelect.addEventListener('change', filterSubcategories);
+
+  window.onload = filterSubcategories;
+</script>
 @endsection
